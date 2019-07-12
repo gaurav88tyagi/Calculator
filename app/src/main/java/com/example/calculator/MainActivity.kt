@@ -9,7 +9,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     var firstNum = 0.0
+    var firstFlag = false
     var secondNum = 0.0
+    var secondFlag = false
     var currOp = '$'
     var isResultSet = false
 
@@ -35,7 +37,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun showResult() {
-        if (currOp != '$') {
+        if (currOp != '$' && firstFlag && secondFlag) {
             val result = calcLogic.evaluate(firstNum, secondNum, currOp)
             tvResult.text = result.toString()
 
@@ -46,21 +48,25 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     fun displayNum(currNum: Int) {
         if(currOp != '$') {
+            secondFlag = true
             secondNum = secondNum * 10 + currNum
             tvSecond.text = secondNum.toString()
         } else {
+            firstFlag = true
             firstNum = firstNum * 10 + currNum
             tvFirst.text = firstNum.toString()
         }
     }
 
     fun displayOp(inputOp: Char) {
-        if(isResultSet) {
-            clear(false)
-            tvFirst.text = firstNum.toString()
+        if (firstFlag) {
+            if(isResultSet) {
+                clear(false)
+                tvFirst.text = firstNum.toString()
+            }
+            currOp = inputOp
+            tvOp.text = currOp.toString()
         }
-        currOp = inputOp
-        tvOp.text = currOp.toString()
     }
 
     fun clear(allClear: Boolean = true) {
@@ -71,9 +77,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         if (allClear) {
             firstNum = 0.0
+            firstFlag = false
         }
 
         secondNum = 0.0
+        secondFlag = false
         currOp = '$'
         isResultSet = false
     }
